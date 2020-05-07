@@ -13,7 +13,7 @@ install_extras() {
     [ -f $PKGLIST ] || get_package_list
 
     for cmd in "$(extra_package_managers)"; do
-        if which $cmd >/dev/null; then
+        if executable $cmd; then
             install_with_$cmd $(get_packages $cmd)
         fi
     done

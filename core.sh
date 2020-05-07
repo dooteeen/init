@@ -1,9 +1,14 @@
 PKGLIST=$HOME/etc/install_packages.list
 DOTFILES=$HOME/.config/dotfiles
 
+executable() {
+    which $1 >/dev/null 2>&1
+    return $?
+}
+
 check_dependencies() {
     # arg 1: command name
-    if which $1 >/dev/null 2>&1; then
+    if executable $1; then
         return 0
     else
         echo "Error: require $1"
@@ -16,12 +21,12 @@ append_sudo() {
 }
 
 dl_file() {
-    if which curl >/dev/null 2>&1; then
+    if executable curl; then
         curl $1 -o $2
         return $?
     fi
 
-    if which wget >/dev/null 2>&1; then
+    if executable wget; then
         wget $1 -O $2
         return $?
     fi
@@ -75,7 +80,7 @@ extra_package_managers() {
 
     RESULT=()
     for cmd in "${RESULT[@]}"; do
-        if which $cmd; then
+        if executable $cmd; then
             RESULT+=("$cmd")
         fi
     done

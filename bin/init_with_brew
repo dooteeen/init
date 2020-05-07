@@ -2,9 +2,14 @@
 PKGLIST=$HOME/etc/install_packages.list
 DOTFILES=$HOME/.config/dotfiles
 
+executable() {
+    which $1 >/dev/null 2>&1
+    return $?
+}
+
 check_dependencies() {
     # arg 1: command name
-    if which $1 >/dev/null 2>&1; then
+    if executable $1; then
         return 0
     else
         echo "Error: require $1"
@@ -17,12 +22,12 @@ append_sudo() {
 }
 
 dl_file() {
-    if which curl >/dev/null 2>&1; then
+    if executable curl; then
         curl $1 -o $2
         return $?
     fi
 
-    if which wget >/dev/null 2>&1; then
+    if executable wget; then
         wget $1 -O $2
         return $?
     fi
@@ -76,7 +81,7 @@ extra_package_managers() {
 
     RESULT=()
     for cmd in "${RESULT[@]}"; do
-        if which $cmd; then
+        if executable $cmd; then
             RESULT+=("$cmd")
         fi
     done
@@ -194,6 +199,23 @@ post_hook_git() {
     echo "\n[include]\npath = $DOTFILES/git/gitconfig"
 }
 
+pre_hook_sudo() {
+    #sed 's/\(Defaults env_reset\)$/\1\nDefaults timestamp_timeout=300/' /etc/sudoers
+
+    export EDITOR=vi
+    if executable xsel; then
+        echo "Defaults timestamp_timeout=300" | xsel --clipboard --input
+        if executable vim && vim --version | grep -q '+clipboard'; then
+            export EDITOR=vim
+        fi
+    fi
+
+    echo "Edit /etc/sudoers:"
+    echo "  Defaults timestamp_timeout=300"
+    echo "press Enter to open visudo."
+    read _void
+    sudo -E visudo
+}
 post_hook_tig() {
     ln -sf $DOTFILES/git/tig $HOME/.tigrc
 }
@@ -221,6 +243,7 @@ install_yay() {
 
     cd $HERE
 }
+
 pre_hooks() {
     exec_hooks 'pre_hook'
 }
@@ -236,7 +259,7 @@ install_extras() {
     [ -f $PKGLIST ] || get_package_list
 
     for cmd in "$(extra_package_managers)"; do
-        if which $cmd >/dev/null; then
+        if executable $cmd; then
             install_with_$cmd $(get_packages $cmd)
         fi
     done
