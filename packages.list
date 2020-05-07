@@ -15,11 +15,13 @@ tmux,pkg,tmux
 vim,apt,vim-gtk3
 vim,pacman,gvim
 vim,pkg,vim
+xsel,apt,xsel
+xsel,pacman,xsel
 
 [package managers]
 #brew,brew,_
 #snap,apt,snap
-yay,pacman,yay
+#yay,pacman,yay
 
 [system utils]
 #gnome-shell,apt,gnome-shell-extensions
@@ -46,6 +48,7 @@ font-sans,yay,ttf-roboto
 font-serif,yay,adobe-source-han-serif-jp-fonts
 
 [other CLI apps]
+bat,yay,bat
 editorconfig,brew,editorconfig
 editorconfig,pacman,editorconfig-core-c
 fzf,apt,ghq
