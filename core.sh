@@ -36,15 +36,15 @@ dl_file() {
 }
 
 detect_os() {
-    [ -e /data/data/com.termux/files/home ]
-        \ && echo "android"
-        \ || sed -n 's/^ID=\(.*\)$/\1/p' /etc/os-release
+    [ -e /data/data/com.termux/files/home ] \
+        && echo "android" \
+        || sed -n 's/^ID=\(.*\)$/\1/p' /etc/os-release
 }
 
 detect_os_base() {
-    [ -e /data/data/com.termux/files/home ]
-        \ && echo "ANDROID"
-        \ || sed -n 's/^ID_LIKE=\(.*\)$/\1/p' /etc/os-release
+    [ -e /data/data/com.termux/files/home ] \
+        && echo "ANDROID" \
+        || sed -n 's/^ID_LIKE=\(.*\)$/\1/p' /etc/os-release
 }
 
 os_package_manager() {
@@ -130,14 +130,14 @@ get_package_list() {
 
 get_packages() {
     # arg 1: package manager name
-    grep -E "^[^#_].+,$1,[^#]+$" $PKGLIST
-        \ | sed -r "s/^.*,$1,([^#]+)$/\1/"
-        \ | xargs
+    grep -E "^[^#_].+,$1,[^#]+$" $PKGLIST \
+        | sed -r "s/^.*,$1,([^#]+)$/\1/"  \
+        | xargs
 }
 
 exec_hooks() {
-    grep -E "^$1_.*() {$" $0
-        \ | sed 's/() {//g'
-        \ | exec
+    grep -E "^$1_.*() {$" $0 \
+        | sed 's/() {//g'    \
+        | exec
 }
 

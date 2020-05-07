@@ -37,15 +37,15 @@ dl_file() {
 }
 
 detect_os() {
-    [ -e /data/data/com.termux/files/home ]
-        \ && echo "android"
-        \ || sed -n 's/^ID=\(.*\)$/\1/p' /etc/os-release
+    [ -e /data/data/com.termux/files/home ] \
+        && echo "android" \
+        || sed -n 's/^ID=\(.*\)$/\1/p' /etc/os-release
 }
 
 detect_os_base() {
-    [ -e /data/data/com.termux/files/home ]
-        \ && echo "ANDROID"
-        \ || sed -n 's/^ID_LIKE=\(.*\)$/\1/p' /etc/os-release
+    [ -e /data/data/com.termux/files/home ] \
+        && echo "ANDROID" \
+        || sed -n 's/^ID_LIKE=\(.*\)$/\1/p' /etc/os-release
 }
 
 os_package_manager() {
@@ -131,15 +131,15 @@ get_package_list() {
 
 get_packages() {
     # arg 1: package manager name
-    grep -E "^[^#_].+,$1,[^#]+$" $PKGLIST
-        \ | sed -r "s/^.*,$1,([^#]+)$/\1/"
-        \ | xargs
+    grep -E "^[^#_].+,$1,[^#]+$" $PKGLIST \
+        | sed -r "s/^.*,$1,([^#]+)$/\1/"  \
+        | xargs
 }
 
 exec_hooks() {
-    grep -E "^$1_.*() {$" $0
-        \ | sed 's/() {//g'
-        \ | exec
+    grep -E "^$1_.*() {$" $0 \
+        | sed 's/() {//g'    \
+        | exec
 }
 
 install_brew() {
@@ -166,15 +166,15 @@ install_brew() {
     /bin/bash -c "$(curl -fsSL $BREW_SCRIPT)"
 
     BREW_DIR=
-    [ -d $HOME/.linuxbrew ] 
-        \ && BREW_DIR="$HOME/.linuxbrew"
-    [ -d /home/linuxbrew/.linuxbrew ] 
-        \ && BREW_DIR="/home/linuxbrew/.linuxbrew"
+    [ -d $HOME/.linuxbrew ] \
+        && BREW_DIR="$HOME/.linuxbrew"
+    [ -d /home/linuxbrew/.linuxbrew ] \
+        && BREW_DIR="/home/linuxbrew/.linuxbrew"
 
     eval $($BREW_DIR/bin/brew shellenv)
     eval $(brew shellenv --prefix) > $HOME/.init_brew.sh
-    [ -r $HOME/.bash_profile ]
-        \ &&  echo "source $HOME/.init_brew.sh" >> $HOME/.bash_profile
+    [ -r $HOME/.bash_profile ] \
+        && echo "source $HOME/.init_brew.sh" >> $HOME/.bash_profile
     echo "source $HOME/.init_brew.sh" >> $HOME/.profile
 }
 

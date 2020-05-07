@@ -22,15 +22,15 @@ install_brew() {
     /bin/bash -c "$(curl -fsSL $BREW_SCRIPT)"
 
     BREW_DIR=
-    [ -d $HOME/.linuxbrew ] 
-        \ && BREW_DIR="$HOME/.linuxbrew"
-    [ -d /home/linuxbrew/.linuxbrew ] 
-        \ && BREW_DIR="/home/linuxbrew/.linuxbrew"
+    [ -d $HOME/.linuxbrew ] \
+        && BREW_DIR="$HOME/.linuxbrew"
+    [ -d /home/linuxbrew/.linuxbrew ] \
+        && BREW_DIR="/home/linuxbrew/.linuxbrew"
 
     eval $($BREW_DIR/bin/brew shellenv)
     eval $(brew shellenv --prefix) > $HOME/.init_brew.sh
-    [ -r $HOME/.bash_profile ]
-        \ &&  echo "source $HOME/.init_brew.sh" >> $HOME/.bash_profile
+    [ -r $HOME/.bash_profile ] \
+        && echo "source $HOME/.init_brew.sh" >> $HOME/.bash_profile
     echo "source $HOME/.init_brew.sh" >> $HOME/.profile
 }
 
