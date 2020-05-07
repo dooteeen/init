@@ -1,4 +1,4 @@
-PKGLSIT=$HOME/etc/install_packages.list
+PKGLIST=$HOME/etc/install_packages.list
 DOTFILES=$HOME/.config/dotfiles
 
 check_dependencies() {
@@ -32,7 +32,7 @@ dl_file() {
 
 detect_os() {
     [ -e /data/data/com.termux/files/home ]
-        \ && echo "ANDROID"
+        \ && echo "android"
         \ || sed -n 's/^ID=\(.*\)$/\1/p' /etc/os-release
 }
 
@@ -59,6 +59,29 @@ os_package_manager() {
     esac
 }
 
+extra_package_managers() {
+    CMDS=()
+    case "$(detect_os)" in
+        "manjaro")
+            CMDS+=("yay")
+            ;;
+        "ubuntu")
+            CMDS+=("brew" "snap")
+            ;;
+        "*")
+            return
+            ;;
+    esac
+
+    RESULT=()
+    for cmd in "${RESULT[@]}"; do
+        if which $cmd; then
+            RESULT+=("$cmd")
+        fi
+    done
+    printf $RESULT
+}
+
 install_with_pacman() {
     # args: packages
     yes '' | $(append_sudo) pacman -Syu
@@ -83,23 +106,33 @@ install_with_yay() {
     yes '' | yay -S $@
 }
 
+install_with_brew() {
+    brew install -y $@
+}
+
 install_with_snap() {
     snap install -y $@
 }
 
 get_package_list() {
-    [ -f $PKGLSIT ] && return 0
+    [ -f $PKGLIST ] && return 0
     check_dependencies wget || return 1
 
     [ -d $HOME/etc ] || mkdir $HOME/etc
-    dl_file https://raw.githubusercontent.com/dooteeen/setup/master/install_packages $PKGLSIT
+    dl_file https://raw.githubusercontent.com/dooteeen/setup/master/packages.list $PKGLIST
     return $?
 }
 
 get_packages() {
     # arg 1: package manager name
-    grep -E "^[^#_].+,$1,[^#]+$" $PKGLSIT
+    grep -E "^[^#_].+,$1,[^#]+$" $PKGLIST
         \ | sed -r "s/^.*,$1,([^#]+)$/\1/"
         \ | xargs
+}
+
+exec_hooks() {
+    grep -E "^$1_.*() {$" $0
+        \ | sed 's/() {//g'
+        \ | exec
 }
 
