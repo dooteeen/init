@@ -287,6 +287,8 @@ post_hooks() {
 # main scripts:
 pre_hooks
 install_essentials
+#install_brew
+#install_yay
 install_extras
 clone_dotfiles
 post_hooks
