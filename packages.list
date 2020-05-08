@@ -48,7 +48,11 @@ font-sans,apt,fonts-roboto
 font-sans,yay,ttf-roboto
 
 [other CLI apps]
-bat,yay,bat
+alternative-cat,yay,bat
+alternative-ls,yay,exa
+bats-testtool,yay,bats-core
+docker,yay,docker
+docker,yay,docker-compose
 editorconfig,brew,editorconfig
 editorconfig,pacman,editorconfig-core-c
 fzf,apt,ghq
