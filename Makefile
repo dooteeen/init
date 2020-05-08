@@ -24,6 +24,7 @@ build_init:
 	echo 'pre_hooks'          >> ${init}
 	echo 'install_essentials' >> ${init}
 	echo '#install_brew'      >> ${init}
+	echo '#install_snap'      >> ${init}
 	echo '#install_yay'       >> ${init}
 	echo 'install_extras'     >> ${init}
 	echo 'clone_dotfiles'     >> ${init}

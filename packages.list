@@ -20,7 +20,7 @@ xsel,pacman,xsel
 
 [package managers]
 #brew,brew,_
-#snap,apt,snap
+#snap,apt,snapd
 #yay,pacman,yay
 
 [system utils]
