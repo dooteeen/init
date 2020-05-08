@@ -136,10 +136,157 @@ get_packages() {
         | xargs
 }
 
-exec_hooks() {
-    grep -E "^$1_.*() {$" $0 \
+_exec_hooks_core() {
+    grep -E "^$1_.*() {$" $2 \
         | sed 's/() {//g'    \
-        | exec
+        | xargs -I % bash -c %
+}
+
+exec_hooks() {
+    _exec_hooks_core $1 $0
+}
+
+install_brew() {
+    # see:
+    # - https://brew.sh/
+    # - https://docs.brew.sh/Homebrew-on-Linux
+
+    case "$(detect_os)" in
+        "ubuntu")
+            $(append_sudo) apt update  -y
+            $(append_sudo) apt upgrade -y
+            $(append_sudo) apt install -y build-essential curl file git
+            ;;
+        "centos")
+            $(append_sudo) yum groupinstall 'Development Tools'
+            $(append_sudo) yum install curl file git
+        "*")
+            echo "Note: No need to install brew on $(detect_os)"
+            return 0
+            ;;
+    esac
+
+    BREW_SCRIPT='https://raw.githubusercontent.com/Homebrew/install/master/install.sh'
+    /bin/bash -c "$(curl -fsSL $BREW_SCRIPT)"
+
+    BREW_DIR=
+    [ -d $HOME/.linuxbrew ] \
+        && BREW_DIR="$HOME/.linuxbrew"
+    [ -d /home/linuxbrew/.linuxbrew ] \
+        && BREW_DIR="/home/linuxbrew/.linuxbrew"
+
+    eval $($BREW_DIR/bin/brew shellenv)
+    eval $(brew shellenv --prefix) > $HOME/.init_brew.sh
+    [ -r $HOME/.bash_profile ] \
+        && echo "source $HOME/.init_brew.sh" >> $HOME/.bash_profile
+    echo "source $HOME/.init_brew.sh" >> $HOME/.profile
+}
+
+post_hook_fish() {
+    mkdir -p $HOME/.config/fish/functions
+    mkdir -p $HOME/.config/fish/complitions
+    ln -sf $DOTFILES/fish/config.fish $HOME/.config/fish/config.fish
+    ln -sf $DOTFILES/fish/fishfile    $HOME/.config/fishfile
+    echo "#!$(which fish)" $HOME/.fish_local
+
+    case "$(detect_os_base)" in
+        "ANDROID")
+            chsh -s $(which fish)
+            ;;
+        "DEBIAN")
+            chsh -s $(which fish)
+            [ "$(whoami)" = "root" ] || sudo chsh -s $(which fish)
+            ;;
+    esac
+}
+
+pre_hook_git() {
+    [ -f $HOME/.gitconfig ] && return 0
+
+    echo "Input your git name/email:"
+    read n
+    read e
+
+    echo "Make ~/.gitconfig"
+    echo "[user]\nname = $n\nemail = $e" > $HOME/.gitconfig
+}
+
+post_hook_git() {
+    echo "\n[include]\npath = $DOTFILES/git/gitconfig"
+}
+
+post_hook_intellij() {
+    [ "$(detect_os_base)" = "ARCH" ] || return 0
+    ln -sf $DOTFILES/intellij/ideavimrc $HOME/.ideavimrc
+}
+
+install_snap() {
+    case "$(detect_os_base)" in
+        "DEBIAN")
+            $(append_sudo) apt install -y snapd
+            ;;
+    esac
+}
+
+pre_hook_sudo() {
+    #sed 's/\(Defaults env_reset\)$/\1\nDefaults timestamp_timeout=300/' /etc/sudoers
+
+    export EDITOR=vi
+    if executable xsel; then
+        echo "Defaults timestamp_timeout=300" | xsel --clipboard --input
+        if executable vim && vim --version | grep -q '+clipboard'; then
+            export EDITOR=vim
+        fi
+    fi
+
+    echo "Edit /etc/sudoers:"
+    echo "  Defaults timestamp_timeout=300"
+    echo "press Enter to open visudo."
+    read _void
+    sudo -E visudo
+}
+
+post_hook_tig() {
+    ln -sf $DOTFILES/git/tigrc $HOME/.tigrc
+}
+
+post_hook_tmux() {
+    ln -sf $DOTFILES/tmux/tmux.conf $HOME/.tmux.conf
+}
+
+post_hook_vim() {
+    grep "source $DOTFILES/vim/vimrc" $HOME/.vimrc >/dev/null 2>&1 && return 0
+    echo "source $DOTFILES/vim/vimrc"  >> $HOME/.vimrc
+    echo "source $DOTFILES/vim/gvimrc" >> $HOME/.gvimrc
+}
+
+post_hook_vscode() {
+    CODE=$HOME/.config/Code
+    [ -d $CODE ] || mkdir -p $CODE
+    ln -sf $DOTFILES/vscode $CODE/User
+    if executable code; then
+        cat $DOTFILES/vscode/extensions.txt \
+            | sed 's/^(.*)$/code --install-extension \1 &' \
+            | xargs \
+            | source
+    fi
+}
+
+install_yay() {
+    [ "$(detect_os_base)" = "ARCH" ] || return 1
+    [ executable yay ] && return 0
+
+    check_dependencies git || $(append_sudo) pacman -S git
+
+    HERE=$(pwd)
+
+    cd /opt
+    $(append_sudo) git clone https://aur.archlinux.org/yay.git
+    [ "$(whoami)" = "root" ] || sudo chown -R $(whoami):$(whoami) ./yay
+    cd yay
+    yes "" | makepkg -si
+
+    cd $HERE
 }
 
 export -f pre_hook_git
