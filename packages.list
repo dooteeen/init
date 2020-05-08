@@ -40,12 +40,12 @@ theme-icon,yay,mcmojave-circle-icon-theme-git
 
 [fonts]
 font-jp,apt,fonts-noto-cjk
+font-jp,yay,adobe-source-han-sans-jp-fonts
+font-jp,yay,adobe-source-han-serif-jp-fonts
 font-mono,apt,fonts-hack
 font-mono,yay,ttf-cica
 font-sans,apt,fonts-roboto
-font-sans,yay,adobe-source-han-sans-jp-fonts
 font-sans,yay,ttf-roboto
-font-serif,yay,adobe-source-han-serif-jp-fonts
 
 [other CLI apps]
 bat,yay,bat
