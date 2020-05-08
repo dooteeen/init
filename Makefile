@@ -8,18 +8,31 @@ clean:
 init:
 	@mkdir ./bin
 
-build_all: build_init build_deploy
+build_all: extract_hooks build_init build_deploy
+
+hooks := ./hooks
+extract_hooks:
+	grep -hE '^pre_hook_.*()' *.sh \
+		| sed 's/pre_hook_\(.*\)() {/export -f pre_hook_\1/g' \
+		| sort \
+		| xargs -I {} echo {} > ${hooks}
+	grep -hE '^post_hook_.*()' *.sh \
+		| sed 's/post_hook_\(.*\)() {/export -f post_hook_\1/g' \
+		| sort \
+		| xargs -I {} echo {} >> ${hooks}
+	echo >> ${hooks}
 
 init := ./bin/init
 build_init:
 	@echo
 	echo '#!/bin/bash' > ${init}
 	cat ./core.sh >> ${init}
-	find . -name '*.sh' \
+	find . -maxdepth 0 -name '*.sh' \
 		-not -name 'core.sh' \
 		-not -name 'main.sh' \
 		| sort \
 		| xargs -I {} cat {} >> ${init}
+	cat ./hooks >> ${init}
 	cat ./main.sh >> ${init}
 	echo 'pre_hooks'          >> ${init}
 	echo 'install_essentials' >> ${init}
@@ -35,11 +48,12 @@ build_deploy:
 	@echo
 	echo '#!/bin/bash' > ${deploy}
 	cat ./core.sh >> ${deploy}
-	find . -name '*.sh' \
+	find . -maxdepth 0 -name '*.sh' \
 		-not -name 'core.sh' \
 		-not -name 'main.sh' \
 		| sort \
 		| xargs -I {} cat {} >> ${deploy}
+	cat ./hooks >> ${deploy}
 	cat ./main.sh >> ${deploy}
 	echo 'pre_hooks'        >> ${deploy}
 	echo 'clone_dotfiles'   >> ${deploy}
