@@ -5,3 +5,4 @@ install_snap() {
             ;;
     esac
 }
+
