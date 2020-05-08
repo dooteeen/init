@@ -15,3 +15,4 @@ pre_hook_sudo() {
     read _void
     sudo -E visudo
 }
+
