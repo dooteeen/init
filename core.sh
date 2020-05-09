@@ -6,6 +6,11 @@ executable() {
     return $?
 }
 
+executable_fn() {
+    [ "$(type -t $1)" = "function" ]
+    return $?
+}
+
 check_dependencies() {
     # arg 1: command name
     if executable $1; then
@@ -69,7 +74,7 @@ os_package_manager() {
             printf 'pkg'
             ;;
         "*")
-            return
+            return 0
             ;;
     esac
 }
@@ -84,7 +89,7 @@ extra_package_managers() {
             CMDS+=("brew" "snap")
             ;;
         "*")
-            return
+            return 0
             ;;
     esac
 
@@ -98,6 +103,26 @@ extra_package_managers() {
 }
 
 install_packages_with() {
+    cmd="install_with_$1"
+    pkg=$(get_packages $1)
+
+    if [ -z "$1" ]; then
+        echo "Warning: cannot detect package manager."
+        return 1
+    elif [ $(executable $1; echo $?) -ne 0 ]; then
+        echo "Note: $1 has not installed."
+        echo "      Skip installing with $1."
+        return 1
+    elif [ $(executable_fn $cmd; echo $?) -ne 0 ]; then
+        echo "Note: $1 is unregisted package manager."
+        echo "      Skip installing with $1."
+        return 1
+    elif [ -z "$pkg" ]; then
+        echo "Note: cannot find packages which are installed by $1."
+        echo "      Skip installing with $1."
+        return 1
+    fi
+
     install_with_$1 $(get_packages $1)
 }
 
