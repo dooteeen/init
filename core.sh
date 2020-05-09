@@ -88,6 +88,10 @@ extra_package_managers() {
     printf $RESULT
 }
 
+install_packages_with() {
+    install_with_$1 $(get_packages $1)
+}
+
 install_with_pacman() {
     # args: packages
     yes '' | $(append_sudo) pacman -Syu

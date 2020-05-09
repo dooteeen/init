@@ -5,8 +5,7 @@ pre_hooks() {
 install_essentials() {
     [ -f $PKGLIST ] || get_package_list
 
-    PM_CMD=$(os_package_manager)
-    install_with_$PM_CMD $(get_packages $PM_CMD)
+    install_packages_with $(os_package_manager)
 }
 
 install_extras() {
@@ -14,7 +13,7 @@ install_extras() {
 
     for cmd in "$(extra_package_managers)"; do
         if executable $cmd; then
-            install_with_$cmd $(get_packages $cmd)
+            install_packages_with $cmd
         fi
     done
 }
