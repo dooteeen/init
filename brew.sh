@@ -2,7 +2,7 @@ install_brew() {
     # see:
     # - https://brew.sh/
     # - https://docs.brew.sh/Homebrew-on-Linux
-    executable brew && return
+    executable brew && return 0
 
     case "$(detect_os)" in
         "ubuntu")
