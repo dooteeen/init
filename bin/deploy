@@ -332,7 +332,7 @@ install_essentials() {
 install_extras() {
     [ -f $PKGLIST ] || get_package_list
 
-    for cmd in "$(extra_package_managers)"; do
+    for cmd in $(extra_package_managers); do
         if executable $cmd; then
             install_packages_with $cmd
         fi
