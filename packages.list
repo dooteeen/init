@@ -60,6 +60,7 @@ fzf,pkg,ghq
 fzf,yay,ghq
 ghq,brew,ghq
 ghq,yay,ghq-bin
+powershell,yay,powershell-bin
 ripgrep,apt,ripgrep
 ripgrep,yay,ripgrep
 tig,apt,tig
