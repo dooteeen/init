@@ -18,6 +18,7 @@ check_dependencies() {
 
 append_sudo() {
     [ "$(whoami)" = 'root' ] || echo -n 'sudo'
+    [ "$(whoami)" = 'root' ] && : || echo -n 'sudo'
 }
 
 dl_file() {
