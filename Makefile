@@ -39,6 +39,8 @@ build_init:
 		| xargs -I {} cat {} >> ${init}
 	cat ./hooks.sh >> ${init}
 	cat ./main.sh  >> ${init}
+	echo 'check_dependencies sed || exit 1' >> ${init}
+	echo 'check_dependencies tr  || exit 1' >> ${init}
 	echo 'pre_hooks'          >> ${init}
 	echo 'install_essentials' >> ${init}
 	echo '#install_brew'      >> ${init}
@@ -61,6 +63,8 @@ build_deploy:
 		| xargs -I {} cat {} >> ${deploy}
 	cat ./hooks.sh >> ${deploy}
 	cat ./main.sh  >> ${deploy}
+	echo 'check_dependencies sed || exit 1' >> ${deploy}
+	echo 'check_dependencies tr  || exit 1' >> ${deploy}
 	echo 'pre_hooks'        >> ${deploy}
 	echo 'clone_dotfiles'   >> ${deploy}
 	echo 'post_hooks'       >> ${deploy}
