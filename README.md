@@ -3,7 +3,7 @@
 On Linux (or WSL):
 
 ```bash
-curl https://raw.githubusercontent.com/dooteeen/init/master/bin/init -o ~/.init
+wget https://git.io/JfCtv -O ~/.init
 bash ~/.init
 ```
 
