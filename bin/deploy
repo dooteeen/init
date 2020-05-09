@@ -17,8 +17,18 @@ check_dependencies() {
     fi
 }
 
+check_wheel() {
+    [ "$(whoami)" = 'root' ] && return 0
+    if test groups | grep -qv -e 'wheel' -e 'sudo'; then
+        echo "Warning: This user can't use 'sudo'."
+        return 1
+    else
+        return 0
+    fi
+}
+
 append_sudo() {
-    [ "$(whoami)" = 'root' ] || echo -n 'sudo'
+    [ "$(whoami)" = 'root' ] && : || echo -n 'sudo'
 }
 
 dl_file() {
@@ -31,7 +41,7 @@ dl_file() {
         wget $1 -O $2
         return $?
     fi
-    
+
     echo "Error: any downloader has not exist."
     return 1
 }
@@ -88,14 +98,28 @@ extra_package_managers() {
     printf $RESULT
 }
 
+install_packages_with() {
+    install_with_$1 $(get_packages $1)
+}
+
 install_with_pacman() {
     # args: packages
+    check_wheel
+    if [ $? -ne 0 ]; then
+        echo "Skip installing with pacman."
+        return 0
+    fi
     yes '' | $(append_sudo) pacman -Syu
     yes '' | $(append_sudo) pacman -S $@
 }
 
 install_with_apt() {
     # args: packages
+    check_wheel
+    if [ $? -ne 0 ]; then
+        echo "Skip installing with apt."
+        return 0
+    fi
     $(append_sudo) apt update  -y
     $(append_sudo) apt upgrade -y
     $(append_sudo) apt install -y $@
@@ -136,14 +160,10 @@ get_packages() {
         | xargs
 }
 
-_exec_hooks_core() {
-    grep -E "^$1_.*() {$" $2 \
+exec_hooks() {
+    grep -E "^$1_.*() {$" ${BASH_SOURCE[0]} \
         | sed 's/() {//g'    \
         | xargs -I % bash -c %
-}
-
-exec_hooks() {
-    _exec_hooks_core $1 $0
 }
 
 install_brew() {
@@ -306,8 +326,7 @@ pre_hooks() {
 install_essentials() {
     [ -f $PKGLIST ] || get_package_list
 
-    PM_CMD=$(os_package_manager)
-    install_with_$PM_CMD $(get_packages $PM_CMD)
+    install_packages_with $(os_package_manager)
 }
 
 install_extras() {
@@ -315,7 +334,7 @@ install_extras() {
 
     for cmd in "$(extra_package_managers)"; do
         if executable $cmd; then
-            install_with_$cmd $(get_packages $cmd)
+            install_packages_with $cmd
         fi
     done
 }
