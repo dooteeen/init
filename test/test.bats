@@ -30,6 +30,18 @@ setup() {
     [ ${lines[1]} -eq 2 ]
 }
 
+@test "executable git" {
+    run executable git
+    [ $status -eq 0 ]
+    [ -z "$output" ]
+}
+
+@test "executable non-existent command (gitxxx)" {
+    run executable gitxxx
+    [ $status -ne 0 ]
+    [ -z "$output" ]
+}
+
 @test "install_packages" {
     run get_pkglist
     PKGLIST="$output"
