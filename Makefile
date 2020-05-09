@@ -14,7 +14,7 @@ init:
 
 build_all: extract_hooks build_init build_deploy
 
-hooks := ./hooks
+hooks := ./hooks.sh
 extract_hooks:
 	grep -hE '^pre_hook_.*()' *.sh \
 		| sed 's/pre_hook_\(.*\)() {/export -f pre_hook_\1/g' \
@@ -33,11 +33,12 @@ build_init:
 	cat ./core.sh >> ${init}
 	find . -maxdepth 1 -name '*.sh' \
 		-not -name 'core.sh' \
+		-not -name 'hooks.sh' \
 		-not -name 'main.sh' \
 		| sort \
 		| xargs -I {} cat {} >> ${init}
-	cat ./hooks >> ${init}
-	cat ./main.sh >> ${init}
+	cat ./hooks.sh >> ${init}
+	cat ./main.sh  >> ${init}
 	echo 'pre_hooks'          >> ${init}
 	echo 'install_essentials' >> ${init}
 	echo '#install_brew'      >> ${init}
@@ -54,11 +55,12 @@ build_deploy:
 	cat ./core.sh >> ${deploy}
 	find . -maxdepth 1 -name '*.sh' \
 		-not -name 'core.sh' \
+		-not -name 'hooks.sh' \
 		-not -name 'main.sh' \
 		| sort \
 		| xargs -I {} cat {} >> ${deploy}
-	cat ./hooks >> ${deploy}
-	cat ./main.sh >> ${deploy}
+	cat ./hooks.sh >> ${deploy}
+	cat ./main.sh  >> ${deploy}
 	echo 'pre_hooks'        >> ${deploy}
 	echo 'clone_dotfiles'   >> ${deploy}
 	echo 'post_hooks'       >> ${deploy}
