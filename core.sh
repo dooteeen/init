@@ -50,27 +50,31 @@ dl_file() {
     return 1
 }
 
+to_lower() {
+    tr '[:upper:]' '[:lower:]'
+}
+
 detect_os() {
     [ -e /data/data/com.termux/files/home ] \
         && echo "android" \
-        || sed -n 's/^ID=\(.*\)$/\1/p' /etc/os-release
+        || sed -n 's/^ID=\(.*\)$/\1/p' /etc/os-release | to_lower
 }
 
 detect_os_base() {
     [ -e /data/data/com.termux/files/home ] \
-        && echo "ANDROID" \
-        || sed -n 's/^ID_LIKE=\(.*\)$/\1/p' /etc/os-release
+        && echo "android" \
+        || sed -n 's/^ID_LIKE=\(.*\)$/\1/p' /etc/os-release | to_lower
 }
 
 os_package_manager() {
     case "$(detect_os_base)" in
-        "ARCH")
+        "arch")
             printf 'pacman'
             ;;
-        "DEBIAN")
+        "debian")
             printf 'apt'
             ;;
-        "ANDROID")
+        "android")
             printf 'pkg'
             ;;
         "*")

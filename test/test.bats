@@ -71,3 +71,17 @@ setup() {
     [ "${lines[2]}" = "Note: ${PKG[1]} has not installed." ]
     [ "${lines[4]}" = "Note: cannot find packages which are installed by ${PKG[2]}." ]
 }
+
+@test "upper to lower" {
+    echo_lower() {
+        echo $1 | to_lower
+    }
+
+    run echo_lower ABC
+    [ $status -eq 0 ]
+    [ "$output" = "abc" ]
+
+    run echo_lower xyz
+    [ $status -eq 0 ]
+    [ "$output" = "xyz" ]
+}
