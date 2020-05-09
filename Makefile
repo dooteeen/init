@@ -59,3 +59,15 @@ build_deploy:
 	echo 'clone_dotfiles'   >> ${deploy}
 	echo 'post_hooks'       >> ${deploy}
 
+test := ./test/test.sh
+test:
+	@echo '#!/bin/bash' > ${test}
+	@cat ./core.sh >> ${test}
+	@find . -wholename './test/*.sh' \
+		-not -wholename "${test}" \
+		| sort \
+		| xargs -I {} cat {} >> ${test}
+	@bats --tap ./test/test.bats
+	@rm ${test}
+
+.PHONY: test

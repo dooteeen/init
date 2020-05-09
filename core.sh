@@ -135,13 +135,9 @@ get_packages() {
         | xargs
 }
 
-_exec_hooks_core() {
-    grep -E "^$1_.*() {$" $2 \
+exec_hooks() {
+    grep -E "^$1_.*() {$" ${BASH_SOURCE[0]} \
         | sed 's/() {//g'    \
         | xargs -I % bash -c %
-}
-
-exec_hooks() {
-    _exec_hooks_core $1 $0
 }
 
