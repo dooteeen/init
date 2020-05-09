@@ -7,6 +7,11 @@ executable() {
     return $?
 }
 
+executable_fn() {
+    [ "$(type -t $1)" = "function" ]
+    return $?
+}
+
 check_dependencies() {
     # arg 1: command name
     if executable $1; then
@@ -46,31 +51,35 @@ dl_file() {
     return 1
 }
 
+to_lower() {
+    tr '[:upper:]' '[:lower:]'
+}
+
 detect_os() {
     [ -e /data/data/com.termux/files/home ] \
         && echo "android" \
-        || sed -n 's/^ID=\(.*\)$/\1/p' /etc/os-release
+        || sed -n 's/^ID=\(.*\)$/\1/p' /etc/os-release | to_lower
 }
 
 detect_os_base() {
     [ -e /data/data/com.termux/files/home ] \
-        && echo "ANDROID" \
-        || sed -n 's/^ID_LIKE=\(.*\)$/\1/p' /etc/os-release
+        && echo "android" \
+        || sed -n 's/^ID_LIKE=\(.*\)$/\1/p' /etc/os-release | to_lower
 }
 
 os_package_manager() {
     case "$(detect_os_base)" in
-        "ARCH")
+        "arch")
             printf 'pacman'
             ;;
-        "DEBIAN")
+        "debian")
             printf 'apt'
             ;;
-        "ANDROID")
+        "android")
             printf 'pkg'
             ;;
         "*")
-            return
+            return 0
             ;;
     esac
 }
@@ -85,7 +94,7 @@ extra_package_managers() {
             CMDS+=("brew" "snap")
             ;;
         "*")
-            return
+            return 0
             ;;
     esac
 
@@ -99,6 +108,26 @@ extra_package_managers() {
 }
 
 install_packages_with() {
+    cmd="install_with_$1"
+    pkg=$(get_packages $1)
+
+    if [ -z "$1" ]; then
+        echo "Warning: cannot detect package manager."
+        return 1
+    elif [ $(executable $1; echo $?) -ne 0 ]; then
+        echo "Note: $1 has not installed."
+        echo "      Skip installing with $1."
+        return 1
+    elif [ $(executable_fn $cmd; echo $?) -ne 0 ]; then
+        echo "Note: $1 is unregisted package manager."
+        echo "      Skip installing with $1."
+        return 1
+    elif [ -z "$pkg" ]; then
+        echo "Note: cannot find packages which are installed by $1."
+        echo "      Skip installing with $1."
+        return 1
+    fi
+
     install_with_$1 $(get_packages $1)
 }
 
@@ -170,7 +199,7 @@ install_brew() {
     # see:
     # - https://brew.sh/
     # - https://docs.brew.sh/Homebrew-on-Linux
-    executable brew && return
+    executable brew && return 0
 
     case "$(detect_os)" in
         "ubuntu")
