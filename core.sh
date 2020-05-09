@@ -16,8 +16,17 @@ check_dependencies() {
     fi
 }
 
+check_wheel() {
+    [ "$(whoami)" = 'root' ] && return 0
+    if test groups | grep -qv -e 'wheel' -e 'sudo'; then
+        echo "Warning: This user can't use 'sudo'."
+        return 1
+    else
+        return 0
+    fi
+}
+
 append_sudo() {
-    [ "$(whoami)" = 'root' ] || echo -n 'sudo'
     [ "$(whoami)" = 'root' ] && : || echo -n 'sudo'
 }
 
@@ -31,7 +40,7 @@ dl_file() {
         wget $1 -O $2
         return $?
     fi
-    
+
     echo "Error: any downloader has not exist."
     return 1
 }
@@ -94,12 +103,22 @@ install_packages_with() {
 
 install_with_pacman() {
     # args: packages
+    check_wheel
+    if [ $? -ne 0 ]; then
+        echo "Skip installing with pacman."
+        return 0
+    fi
     yes '' | $(append_sudo) pacman -Syu
     yes '' | $(append_sudo) pacman -S $@
 }
 
 install_with_apt() {
     # args: packages
+    check_wheel
+    if [ $? -ne 0 ]; then
+        echo "Skip installing with apt."
+        return 0
+    fi
     $(append_sudo) apt update  -y
     $(append_sudo) apt upgrade -y
     $(append_sudo) apt install -y $@
