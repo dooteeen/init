@@ -27,7 +27,7 @@ build_init:
 	@echo
 	echo '#!/bin/bash' > ${init}
 	cat ./core.sh >> ${init}
-	find . -maxdepth 0 -name '*.sh' \
+	find . -maxdepth 1 -name '*.sh' \
 		-not -name 'core.sh' \
 		-not -name 'main.sh' \
 		| sort \
@@ -48,7 +48,7 @@ build_deploy:
 	@echo
 	echo '#!/bin/bash' > ${deploy}
 	cat ./core.sh >> ${deploy}
-	find . -maxdepth 0 -name '*.sh' \
+	find . -maxdepth 1 -name '*.sh' \
 		-not -name 'core.sh' \
 		-not -name 'main.sh' \
 		| sort \
