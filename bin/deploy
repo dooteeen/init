@@ -210,6 +210,7 @@ install_brew() {
         "centos")
             $(append_sudo) yum groupinstall 'Development Tools'
             $(append_sudo) yum install curl file git
+            ;;
         "*")
             echo "Note: No need to install brew on $(detect_os)"
             return 0
@@ -391,6 +392,8 @@ post_hooks() {
 
 # main scripts:
 
+check_dependencies sed || exit 1
+check_dependencies tr  || exit 1
 pre_hooks
 clone_dotfiles
 post_hooks
