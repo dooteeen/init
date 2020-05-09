@@ -1,6 +1,10 @@
 #!/usr/bin/make
 
-update: clean init build_all
+update: gitconfig clean init build_all
+
+gitconfig:
+	@git config --local core.hooksPath .githooks
+	@git config --local core.whitespace -blank-at-eof
 
 clean:
 	@rm -rf ./bin
