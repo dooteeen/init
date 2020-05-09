@@ -1,5 +1,5 @@
 #!/usr/bin/env bats
-# vim: set ft=bats :
+# vim: set ft=sh :
 
 setup() {
     load $BATS_TEST_DIRNAME/test.sh
