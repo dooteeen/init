@@ -69,8 +69,10 @@ test := ./test/test.sh
 test:
 	@echo '#!/bin/bash' > ${test}
 	@cat ./core.sh >> ${test}
+	@cat ./test/core.sh >> ${test}
 	@find . -wholename './test/*.sh' \
 		-not -wholename "${test}" \
+		-not -wholename "./test/core.sh" \
 		| sort \
 		| xargs -I {} cat {} >> ${test}
 	@bats --tap ./test/test.bats
