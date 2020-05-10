@@ -50,7 +50,7 @@ font-sans,yay,ttf-roboto
 [other CLI apps]
 alternative-cat,yay,bat
 alternative-ls,yay,exa
-bats-testtool,yay,bats-core
+bash-testsuite,yay,bats-core
 docker,yay,docker
 docker,yay,docker-compose
 editorconfig,brew,editorconfig
@@ -63,6 +63,8 @@ ghq,yay,ghq-bin
 powershell,yay,powershell-bin
 ripgrep,apt,ripgrep
 ripgrep,yay,ripgrep
+termux-api,pkg,termux-api
+termux-tools,pkg,termux-tools
 tig,apt,tig
 tig,pacman,tig
 tig,pkg,tig
