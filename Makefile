@@ -70,10 +70,11 @@ test := ./test/test.sh
 test:
 	@echo '#!/bin/bash' > ${test}
 	@cat ./core.sh >> ${test}
-	@cat ./test/core.sh >> ${test}
+	@cat ./main.sh >> ${test}
+	@cat ./test/util.sh >> ${test}
 	@find . -wholename './test/*.sh' \
 		-not -wholename "${test}" \
-		-not -wholename "./test/core.sh" \
+		-not -wholename "./test/util.sh" \
 		| sort \
 		| xargs -I {} cat {} >> ${test}
 	@bats --tap ./test/test.bats
