@@ -1,8 +1,8 @@
 #!/usr/bin/env bats
 # vim: set ft=sh :
 
-# TODO: use git-submodules to use bats-assert
-#       see: https://github.com/ztombol/bats-docs
+load $BATS_TEST_DIRNAME/helper/bats-support/load.bash
+load $BATS_TEST_DIRNAME/helper/bats-assert/load.bash
 
 setup() {
     load $BATS_TEST_DIRNAME/test.sh
@@ -15,8 +15,8 @@ setup() {
         || skip "Current user hasn't belong to wheel group."
 
     run echo $(append_sudo)
-    [ $status -eq 0 ]
-    [ "$output" = "sudo" ]
+    assert_success
+    assert_output "sudo"
 }
 
 @test "append_sudo on root" {
@@ -24,8 +24,8 @@ setup() {
         && skip "Current user is not root."
 
     run echo $(append_sudo)
-    [ $status -eq 0 ]
-    [ -z "$output" ]
+    assert_success
+    refute_output
 }
 
 @test "clone_dotfiles" {
@@ -34,40 +34,40 @@ setup() {
 
     current_remote=$(git remote get-url $(git remote))
     run git remote get-url $(git remote)
-    [ "$output" = "$current_remote" ]
+    assert_output "$current_remote"
 
     run get_dotfiles_dir
     DOTFILES="$output"
 
     run clone_dotfiles
-    [ $status -eq 0 ]
+    assert_success
 
     run get_repository_info
-    [ "${lines[0]}" = "$DOTFILES" ]
-    [ "${lines[1]}" = "origin" ]
-    [ "${lines[2]}" = "git@github.com:dooteeen/dotfiles.git" ]
+    assert_line --index 0 "$DOTFILES"
+    assert_line --index 1 "origin"
+    assert_line --index 2 "git@github.com:dooteeen/dotfiles.git"
 
     run git remote get-url $(git remote)
-    [ "$output" = "$current_remote" ]
+    assert_output "$current_remote"
 }
 
 @test "exec_hooks" {
     run test_exec_hooks
-    [ $status -eq 0 ]
-    [ ${lines[0]} -eq 1 ]
-    [ ${lines[1]} -eq 2 ]
+    assert_success
+    assert_line --index 0 1
+    assert_line --index 1 2
 }
 
 @test "executable git" {
     run executable git
-    [ $status -eq 0 ]
-    [ -z "$output" ]
+    assert_success
+    refute_output
 }
 
 @test "executable non-existent command (gitxxx)" {
     run executable gitxxx
-    [ $status -ne 0 ]
-    [ -z "$output" ]
+    assert_failure
+    refute_output
 }
 
 @test "install_packages with pacman, yay" {
@@ -80,8 +80,8 @@ setup() {
     PKGLIST="$output"
 
     run test_install_packages_arch
-    [ "${lines[0]}" = "pacman -S p1 p2" ]
-    [ "${lines[1]}" = "yay -S p3 p4 p5 p6" ]
+    assert_line --index 0 "pacman -S p1 p2"
+    assert_line --index 1 "yay -S p3 p4 p5 p6"
 }
 
 @test "install_packages with wrong commands" {
@@ -94,9 +94,12 @@ setup() {
     PKG=("git" "dummy" "bash")
 
     run test_install_packages_dummy
-    [ "${lines[0]}" = "Note: ${PKG[0]} is unregisted package manager." ]
-    [ "${lines[2]}" = "Note: ${PKG[1]} has not installed." ]
-    [ "${lines[4]}" = "Note: cannot find packages which are installed by ${PKG[2]}." ]
+    assert_line --index 0 --partial "${PKG[0]}"
+    assert_line --index 2 --partial "${PKG[1]}"
+    assert_line --index 4 --partial "${PKG[2]}"
+    assert_line --index 0 --partial "unregisted"
+    assert_line --index 2 --partial "not installed"
+    assert_line --index 4 --partial "cannot find packages"
 }
 
 @test "upper to lower" {
@@ -105,10 +108,10 @@ setup() {
     }
 
     run echo_lower ABC
-    [ $status -eq 0 ]
-    [ "$output" = "abc" ]
+    assert_success
+    assert_output "abc"
 
     run echo_lower xyz
-    [ $status -eq 0 ]
-    [ "$output" = "xyz" ]
+    assert_success
+    assert_output "xyz"
 }
