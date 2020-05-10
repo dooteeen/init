@@ -3,15 +3,16 @@ install_brew() {
     # - https://brew.sh/
     # - https://docs.brew.sh/Homebrew-on-Linux
     executable brew && return 0
-    check_wheel || return 1
 
     case "$(detect_os)" in
         "ubuntu")
+            check_wheel || return 1
             $(append_sudo) apt update  -y
             $(append_sudo) apt upgrade -y
             $(append_sudo) apt install -y build-essential curl file git
             ;;
         "centos")
+            check_wheel || return 1
             $(append_sudo) yum groupinstall 'Development Tools'
             $(append_sudo) yum install curl file git
             ;;
