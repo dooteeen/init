@@ -32,6 +32,10 @@ setup() {
     check_network_connection \
         || skip "Failed to connect to network."
 
+    current_remote=$(git remote get-url $(git remote))
+    run git remote get-url $(git remote)
+    [ "$output" = "$current_remote" ]
+
     run get_dotfiles_dir
     DOTFILES="$output"
 
@@ -42,6 +46,9 @@ setup() {
     [ "${lines[0]}" = "$DOTFILES" ]
     [ "${lines[1]}" = "origin" ]
     [ "${lines[2]}" = "git@github.com:dooteeen/dotfiles.git" ]
+
+    run git remote get-url $(git remote)
+    [ "$output" = "$current_remote" ]
 }
 
 @test "exec_hooks" {
