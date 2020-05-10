@@ -271,6 +271,13 @@ post_hook_intellij() {
     ln -sf $DOTFILES/intellij/ideavimrc $HOME/.ideavimrc
 }
 
+pre_hook_pacman() {
+    [ "$(detect_os_base)" = "arch" ] || return 0
+    check_wheel || return 0
+
+    $(append_sudo) sed -i -e 's/^#Color/Color/' /etc/pacman.conf
+}
+
 install_snap() {
     executable snap && return 0
     case "$(detect_os_base)" in
@@ -342,6 +349,7 @@ install_yay() {
 }
 
 export -f pre_hook_git
+export -f pre_hook_pacman
 export -f pre_hook_sudo
 export -f post_hook_fish
 export -f post_hook_git
