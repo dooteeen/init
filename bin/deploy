@@ -99,12 +99,12 @@ extra_package_managers() {
     esac
 
     RESULT=()
-    for cmd in "${RESULT[@]}"; do
+    for cmd in "${CMDS[@]}"; do
         if executable $cmd; then
             RESULT+=("$cmd")
         fi
     done
-    printf $RESULT
+    printf ${RESULT[@]}
 }
 
 install_packages_with() {
@@ -161,7 +161,7 @@ install_with_pkg() {
 }
 
 install_with_yay() {
-    [ "$(whoami)" = "root" ] && return
+    [ "$(whoami)" = "root" ] && return 0
     yes '' | yay -S $@
 }
 
@@ -175,7 +175,6 @@ install_with_snap() {
 
 get_package_list() {
     [ -f $PKGLIST ] && return 0
-    check_dependencies wget || return 1
 
     [ -d $HOME/etc ] || mkdir $HOME/etc
     dl_file https://raw.githubusercontent.com/dooteeen/setup/master/packages.list $PKGLIST
@@ -263,7 +262,7 @@ pre_hook_git() {
 }
 
 post_hook_git() {
-    grep -q "$HOME/git/gitconfig" $HOME/.gitconfig
+    grep -q "$HOME/git/gitconfig" $HOME/.gitconfig && return 0
     echo "\n[include]\npath = $DOTFILES/git/gitconfig" >> $HOME/.gitconfig
 }
 
@@ -308,21 +307,21 @@ post_hook_tmux() {
 }
 
 post_hook_vim() {
-    grep "source $DOTFILES/vim/vimrc" $HOME/.vimrc >/dev/null 2>&1 && return 0
+    grep -q "source $DOTFILES/vim/vimrc" $HOME/.vimrc && return 0
     echo "source $DOTFILES/vim/vimrc"  >> $HOME/.vimrc
     echo "source $DOTFILES/vim/gvimrc" >> $HOME/.gvimrc
 }
 
 post_hook_vscode() {
+    executable code || return 1
+
     CODE=$HOME/.config/Code
     [ -d $CODE ] || mkdir -p $CODE
+
     ln -sf $DOTFILES/vscode $CODE/User
-    if executable code; then
-        cat $DOTFILES/vscode/extensions.txt \
-            | sed 's/^(.*)$/code --install-extension \1 &' \
-            | xargs \
-            | source
-    fi
+
+    cat $DOTFILES/vscode/extensions.txt \
+        | xargs -I % code --install-extension %
 }
 
 install_yay() {
@@ -381,9 +380,13 @@ clone_dotfiles() {
     echo "Install dotfiles"
     mkdir $HOME/.config 2>/dev/null
     git clone https://github.com/dooteeen/dotfiles $DOTFILES
+    if [ $? -ne 0]; then
+        echo "Error: failed to clone dotfiles."
+        return 1
+    fi
 
     cd $DOTFILES
-    git remote add origin git@github.com:dooteeen/dotfiles.git
+    git remote set-url origin git@github.com:dooteeen/dotfiles.git
     cd $HERE
 }
 
