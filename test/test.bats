@@ -1,5 +1,6 @@
 #!/usr/bin/env bats
 # vim: set ft=sh :
+# code: language=bats
 
 load $BATS_TEST_DIRNAME/helper/bats-support/load.bash
 load $BATS_TEST_DIRNAME/helper/bats-assert/load.bash
