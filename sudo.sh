@@ -1,4 +1,4 @@
-pre_hook_sudo() {
+first_hook_sudo() {
     check_wheel || return 1
 
     export EDITOR=vi

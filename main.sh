@@ -1,4 +1,5 @@
 pre_hooks() {
+    exec_hooks 'first_hook'
     exec_hooks 'pre_hook'
 }
 

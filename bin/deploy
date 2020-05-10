@@ -294,7 +294,7 @@ install_snap() {
     esac
 }
 
-pre_hook_sudo() {
+first_hook_sudo() {
     check_wheel || return 1
 
     export EDITOR=vi
@@ -355,9 +355,10 @@ install_yay() {
     cd $HERE
 }
 
+
+export -f first_hook_sudo
 export -f pre_hook_git
 export -f pre_hook_pacman
-export -f pre_hook_sudo
 export -f post_hook_fish
 export -f post_hook_git
 export -f post_hook_intellij
@@ -367,6 +368,7 @@ export -f post_hook_vim
 export -f post_hook_vscode
 
 pre_hooks() {
+    exec_hooks 'first_hook'
     exec_hooks 'pre_hook'
 }
 

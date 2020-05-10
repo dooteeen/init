@@ -13,10 +13,15 @@ build_all: extract_hooks build_init build_deploy
 
 hooks := ./hooks.sh
 extract_hooks:
+	echo > ${hooks}
+	grep -hE '^first_hook_.*()' *.sh \
+		| sed 's/first_hook_\(.*\)() {/export -f first_hook_\1/g' \
+		| sort \
+		| xargs -I {} echo {} >> ${hooks}
 	grep -hE '^pre_hook_.*()' *.sh \
 		| sed 's/pre_hook_\(.*\)() {/export -f pre_hook_\1/g' \
 		| sort \
-		| xargs -I {} echo {} > ${hooks}
+		| xargs -I {} echo {} >> ${hooks}
 	grep -hE '^post_hook_.*()' *.sh \
 		| sed 's/post_hook_\(.*\)() {/export -f post_hook_\1/g' \
 		| sort \

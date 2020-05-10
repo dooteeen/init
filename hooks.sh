@@ -1,6 +1,7 @@
+
+export -f first_hook_sudo
 export -f pre_hook_git
 export -f pre_hook_pacman
-export -f pre_hook_sudo
 export -f post_hook_fish
 export -f post_hook_git
 export -f post_hook_intellij
