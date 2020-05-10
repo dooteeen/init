@@ -98,12 +98,12 @@ extra_package_managers() {
     esac
 
     RESULT=()
-    for cmd in "${RESULT[@]}"; do
+    for cmd in "${CMDS[@]}"; do
         if executable $cmd; then
             RESULT+=("$cmd")
         fi
     done
-    printf $RESULT
+    printf ${RESULT[@]}
 }
 
 install_packages_with() {

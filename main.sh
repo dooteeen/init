@@ -27,9 +27,13 @@ clone_dotfiles() {
     echo "Install dotfiles"
     mkdir $HOME/.config 2>/dev/null
     git clone https://github.com/dooteeen/dotfiles $DOTFILES
+    if [ $? -ne 0]; then
+        echo "Error: failed to clone dotfiles."
+        return 1
+    fi
 
     cd $DOTFILES
-    git remote add origin git@github.com:dooteeen/dotfiles.git
+    git remote set-url origin git@github.com:dooteeen/dotfiles.git
     cd $HERE
 }
 

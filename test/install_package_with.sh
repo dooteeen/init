@@ -1,9 +1,11 @@
 get_test_cmds_ok() {
-    echo "pacman yay"
+    cmds=("pacman" "yay")
+    echo ${cmds[@]}
 }
 
 get_test_cmds_ng() {
-    echo "git dummy bash"
+    cmds=("git" "dummy" "bash")
+    echo ${cmds[@]}
 }
 
 install_with_pacman() {

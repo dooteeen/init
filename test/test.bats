@@ -25,6 +25,22 @@ setup() {
     [ -z "$output" ]
 }
 
+@test "clone_dotfiles" {
+    check_network_connection \
+        || skip "Failed to connect to network."
+
+    run get_dotfiles_dir
+    DOTFILES="$output"
+
+    run clone_dotfiles
+    [ $status -eq 0 ]
+
+    run get_repository_info
+    [ "${lines[0]}" = "$DOTFILES" ]
+    [ "${lines[1]}" = "origin" ]
+    [ "${lines[2]}" = "git@github.com:dooteeen/dotfiles.git" ]
+}
+
 @test "exec_hooks" {
     run test_exec_hooks
     [ $status -eq 0 ]
