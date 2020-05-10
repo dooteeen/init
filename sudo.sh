@@ -1,5 +1,5 @@
 pre_hook_sudo() {
-    #sed 's/\(Defaults env_reset\)$/\1\nDefaults timestamp_timeout=300/' /etc/sudoers
+    check_wheel || return 1
 
     export EDITOR=vi
     if executable xsel; then
@@ -13,6 +13,6 @@ pre_hook_sudo() {
     echo "  Defaults timestamp_timeout=300"
     echo "press Enter to open visudo."
     read _void
-    sudo -E visudo
+    [ "$(whoami)" = "root" ] && visudo || sudo -E visudo
 }
 
