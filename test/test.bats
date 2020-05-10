@@ -94,12 +94,9 @@ setup() {
     PKG=("git" "dummy" "bash")
 
     run test_install_packages_dummy
-    assert_line --index 0 --partial "${PKG[0]}"
-    assert_line --index 2 --partial "${PKG[1]}"
-    assert_line --index 4 --partial "${PKG[2]}"
-    assert_line --index 0 --partial "unregisted"
-    assert_line --index 2 --partial "not installed"
-    assert_line --index 4 --partial "cannot find packages"
+    assert_line --index 0 --partial "${PKG[0]}" "unregisted"
+    assert_line --index 2 --partial "${PKG[1]}" "not installed"
+    assert_line --index 4 --partial "${PKG[2]}" "cannot find packages"
 }
 
 @test "upper to lower" {
