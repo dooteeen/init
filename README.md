@@ -12,4 +12,3 @@ On Native Windows:
 ```powershell
 # TODO: make PowerShell script
 ```
-
