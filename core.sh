@@ -160,7 +160,7 @@ install_with_pkg() {
 }
 
 install_with_yay() {
-    [ "$(whoami)" = "root" ] && return
+    [ "$(whoami)" = "root" ] && return 0
     yes '' | yay -S $@
 }
 
@@ -174,7 +174,6 @@ install_with_snap() {
 
 get_package_list() {
     [ -f $PKGLIST ] && return 0
-    check_dependencies wget || return 1
 
     [ -d $HOME/etc ] || mkdir $HOME/etc
     dl_file https://raw.githubusercontent.com/dooteeen/setup/master/packages.list $PKGLIST
