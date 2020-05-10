@@ -1,6 +1,9 @@
 #!/usr/bin/env bats
 # vim: set ft=sh :
 
+# TODO: use git-submodules to use bats-assert
+#       see: https://github.com/ztombol/bats-docs
+
 setup() {
     load $BATS_TEST_DIRNAME/test.sh
 }
@@ -9,7 +12,7 @@ setup() {
     [ "$(whoami)" = "root" ] \
         && skip "Current user is root."
     groups | grep -q -e "wheel" -e "sudo" \
-        || skip "Current user isn't belong with wheel group."
+        || skip "Current user hasn't belong to wheel group."
 
     run echo $(append_sudo)
     [ $status -eq 0 ]
@@ -62,7 +65,7 @@ setup() {
 
 @test "install_packages with pacman, yay" {
     grep -iq 'ID_LIKE=arch' /etc/os-release \
-        || skip "This test is support only Archlinux."
+        || skip "This test supports only Archlinux."
     [ "$(type -t yay)" = "file" ] \
         || skip "yay has not installed."
 
@@ -75,7 +78,6 @@ setup() {
 }
 
 @test "install_packages with wrong commands" {
-    # git & bash have installed already, isn't it?
     [ -z $(type -t dummy) ] \
         || skip "dummy is executable. Please delete."
 
