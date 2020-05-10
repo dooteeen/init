@@ -51,12 +51,22 @@ git status --porcelain \
     | awk '{ print $2 }' \
     | grep -iq -e 'Makefile' -e '.*\.sh' -e '.*\.bats'
 if [ $? -eq 0 ]; then
-    echo "start: make test ..."
-    test_result=$(make test)
-    test_status=$?
-    if [ $test_status -ne 0 ]; then
+    echo make test:
+    make test
+    if [ $? -ne 0 ]; then
         echo "git pre-commit error: test has failed." >&2
         exit 1
+    fi
+
+    git status --porcelain \
+        | grep -e '^[AM].*' \
+        | awk '{ print $2 }' \
+        | grep -i -e '.*\./sh$' -e 'Makefile' \
+        | grep -iqv '^test/.*'
+    if [ $? -eq 0 ]; then
+        echo
+        echo make clean build_all:
+        make clean build_all
     fi
 fi
 
