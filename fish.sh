@@ -6,10 +6,10 @@ post_hook_fish() {
     echo "#!$(which fish)" $HOME/.fish_local
 
     case "$(detect_os_base)" in
-        "ANDROID")
+        "android")
             chsh -s $(which fish)
             ;;
-        "DEBIAN")
+        "debian")
             chsh -s $(which fish)
             [ "$(whoami)" = "root" ] || sudo chsh -s $(which fish)
             ;;

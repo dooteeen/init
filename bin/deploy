@@ -248,10 +248,10 @@ post_hook_fish() {
     echo "#!$(which fish)" $HOME/.fish_local
 
     case "$(detect_os_base)" in
-        "ANDROID")
+        "android")
             chsh -s $(which fish)
             ;;
-        "DEBIAN")
+        "debian")
             chsh -s $(which fish)
             [ "$(whoami)" = "root" ] || sudo chsh -s $(which fish)
             ;;
@@ -275,7 +275,7 @@ post_hook_git() {
 }
 
 post_hook_intellij() {
-    [ "$(detect_os_base)" = "ARCH" ] || return 0
+    [ "$(detect_os_base)" = "arch" ] || return 0
     ln -sf $DOTFILES/intellij/ideavimrc $HOME/.ideavimrc
 }
 
@@ -289,7 +289,7 @@ pre_hook_pacman() {
 install_snap() {
     executable snap && return 0
     case "$(detect_os_base)" in
-        "DEBIAN")
+        "debian")
             $(append_sudo) apt install -y snapd
             ;;
     esac
