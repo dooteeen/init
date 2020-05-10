@@ -10,7 +10,8 @@ setup() {
         && skip "Current user is root."
     groups | grep -q -e "wheel" -e "sudo" \
         || skip "Current user isn't belong with wheel group."
-    run test_append_sudo
+
+    run echo $(append_sudo)
     [ $status -eq 0 ]
     [ "$output" = "sudo" ]
 }
@@ -18,7 +19,8 @@ setup() {
 @test "append_sudo on root" {
     [ "$(whoami)" != "root" ] \
         && skip "Current user is not root."
-    run test_append_sudo
+
+    run echo $(append_sudo)
     [ $status -eq 0 ]
     [ -z "$output" ]
 }
