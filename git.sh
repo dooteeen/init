@@ -10,7 +10,7 @@ pre_hook_git() {
 }
 
 post_hook_git() {
-    grep -q "$HOME/git/gitconfig" $HOME/.gitconfig
+    grep -q "$HOME/git/gitconfig" $HOME/.gitconfig && return 0
     echo "\n[include]\npath = $DOTFILES/git/gitconfig" >> $HOME/.gitconfig
 }
 
