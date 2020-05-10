@@ -1,5 +1,5 @@
 install_yay() {
-    [ "$(detect_os_base)" = "ARCH" ] || return 1
+    [ "$(detect_os_base)" = "arch" ] || return 1
     executable yay && return 0
 
     check_dependencies git || $(append_sudo) pacman -S git
