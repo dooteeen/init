@@ -3,6 +3,7 @@ install_brew() {
     # - https://brew.sh/
     # - https://docs.brew.sh/Homebrew-on-Linux
     executable brew && return 0
+    check_wheel || return 1
 
     case "$(detect_os)" in
         "ubuntu")
@@ -19,6 +20,12 @@ install_brew() {
             return 0
             ;;
     esac
+
+    if [ "$(whoami)" = "root" ]; then
+        echo "Note: root user cannot use brew."
+        echo "      run this script again as non-root user."
+        return 0
+    fi
 
     BREW_SCRIPT='https://raw.githubusercontent.com/Homebrew/install/master/install.sh'
     /bin/bash -c "$(curl -fsSL $BREW_SCRIPT)"
