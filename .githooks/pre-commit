@@ -57,7 +57,7 @@ do
         git status --porcelain \
             | grep -e '^[AM].*' \
             | awk '{ print $2 }' \
-            | grep -i -e 'bin/.*\.sh' \
+            | grep -i -e 'bin/.*' \
             | wc -l \
             | while read updated_script
         do
