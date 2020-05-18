@@ -1,4 +1,3 @@
-
 export -f first_hook_sudo
 export -f pre_hook_git
 export -f pre_hook_pacman

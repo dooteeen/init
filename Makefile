@@ -9,11 +9,12 @@ gitconfig:
 clean:
 	@rm -rf ./bin/*
 
-build_all: extract_hooks build_init build_deploy
+build_all: export_hooks build_init build_deploy
 
 hooks := ./hooks.sh
-extract_hooks:
-	echo > ${hooks}
+export_hooks:
+	@echo
+	> ${hooks}
 	grep -hE '^first_hook_.*()' *.sh \
 		| sed 's/first_hook_\(.*\)() {/export -f first_hook_\1/g' \
 		| sort \
