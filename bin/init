@@ -325,6 +325,16 @@ post_hook_tmux() {
     ln -sf $DOTFILES/tmux/tmux.conf $HOME/.tmux.conf
 }
 
+pre_hook_vim() {
+    check_wheel || return 0
+    case "$(detect_os_base)":
+        "debian")
+            dpkg -s vim-tiny >/dev/null 2>&1 \
+                && $(append_sudo) apt remove -y vim-tiny
+            ;;
+    esac
+}
+
 post_hook_vim() {
     grep -q "source $DOTFILES/vim/vimrc" $HOME/.vimrc && return 0
     echo "source $DOTFILES/vim/vimrc"  >> $HOME/.vimrc
@@ -364,6 +374,7 @@ install_yay() {
 export -f first_hook_sudo
 export -f pre_hook_git
 export -f pre_hook_pacman
+export -f pre_hook_vim
 export -f post_hook_fish
 export -f post_hook_git
 export -f post_hook_intellij
