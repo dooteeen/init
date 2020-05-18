@@ -45,6 +45,36 @@ EOF
 	exit 1
 fi
 
+# check build has completed
+git status --porcelain \
+    | grep -e '^[AM].*' \
+    | awk '{ print $2 }' \
+    | grep -i -e '[^/]*\.sh' \
+    | wc -l \
+    | while read updated_sh
+do
+    if [[ $updated_sh -ne 0 ]]; then
+        git status --porcelain \
+            | grep -e '^[AM].*' \
+            | awk '{ print $2 }' \
+            | grep -i -e 'bin/.*\.sh' \
+            | wc -l \
+            | while read updated_script
+        do
+            if [[ $updated_script -eq 0 ]]; then
+                echo "git pre-commit error: build has not completed." >&2
+                echo "make update:"
+                sleep 3s
+                make update
+                exit 1
+            fi
+        done
+    fi
+done
+if [ $? -ne 0 ]; then
+    exit 1
+fi
+
 # make-test check
 git status --porcelain \
     | grep -e '^[AM].*' \
