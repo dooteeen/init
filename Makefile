@@ -3,7 +3,7 @@
 update: gitconfig clean build_all
 
 gitconfig:
-	@git config --local core.hooksPath .githooks
+	@git config --local core.hooksPath githooks
 	@git config --local core.whitespace -blank-at-eof
 
 clean:
