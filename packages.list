@@ -9,9 +9,13 @@ git,pacman,git
 git,pkg,git
 make,apt,make
 make,pacman,make
+make,pkg,make
+man,pkg,man
 tmux,apt,tmux
 tmux,pacman,tmux
 tmux,pkg,tmux
+tree,pacman,tree
+tree,pkg,tree
 vim,apt,vim-gtk3
 vim,pacman,gvim
 vim,pkg,vim
@@ -30,8 +34,8 @@ gnome-shell,yay,gnome-shell-extensions
 gnome-shell,yay,chrome-gnome-shell
 input-jp,apt,ibus-mozc
 input-jp,yay,ibus-mozc
-partition,apt,gparted
-partition,pacman,gparted
+# partition,apt,gparted
+# partition,pacman,gparted
 time-server,apt,ntp
 
 [themes]
@@ -55,13 +59,17 @@ docker,yay,docker
 docker,yay,docker-compose
 editorconfig,brew,editorconfig
 editorconfig,pacman,editorconfig-core-c
+fisherman,yay,fisher
 fzf,apt,ghq
 fzf,pkg,ghq
 fzf,yay,ghq
 ghq,brew,ghq
 ghq,yay,ghq-bin
+jq,pkg,jq
+jq,yay,jq
 powershell,yay,powershell-bin
 ripgrep,apt,ripgrep
+ripgrep,pkg,ripgrep
 ripgrep,yay,ripgrep
 termux-api,pkg,termux-api
 termux-tools,pkg,termux-tools
