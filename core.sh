@@ -50,9 +50,26 @@ dl_file() {
     return 1
 }
 
-to_lower() {
+to_lower_with_tr() {
     tr '[:upper:]' '[:lower:]'
 }
+
+to_lower_with_expand() {
+    while read txt
+    do
+        echo ${txt,,}
+    done
+}
+
+if [ ${BASH_VERSION:0:1} -ge 4 ]; then
+    to_lower() {
+        to_lower_with_expand
+    }
+else
+    to_lower() {
+        to_lower_with_tr
+    }
+fi
 
 detect_os() {
     [ -e /data/data/com.termux/files/home ] \

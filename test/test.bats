@@ -113,3 +113,37 @@ setup() {
     assert_success
     assert_output "xyz"
 }
+
+@test "upper to lower by tr" {
+    executable tr \
+        || skip "tr has not installed."
+
+    echo_lower_with_tr() {
+        echo $1 | to_lower_with_tr
+    }
+
+    run echo_lower_with_tr ABC
+    assert_success
+    assert_output "abc"
+
+    run echo_lower_with_tr xyz
+    assert_success
+    assert_output "xyz"
+}
+
+@test "upper to lower by Bash's parameter expansion" {
+    [ ${BASH_VERSION:0:1} -lt 4 ] \
+        && skip "Bash version($(echo $BASH_VERSION | grep -o ^[0-9\.]*)) is less than 4.x"
+
+    echo_lower_with_bash() {
+        echo $1 | to_lower_with_expand
+    }
+
+    run echo_lower_with_bash ABC
+    assert_success
+    assert_output "abc"
+
+    run echo_lower_with_bash xyz
+    assert_success
+    assert_output "xyz"
+}
