@@ -11,7 +11,7 @@ executable_fn() {
     return $?
 }
 
-check_dependencies() {
+check_dependent() {
     # arg 1: command name
     if executable $1; then
         return 0

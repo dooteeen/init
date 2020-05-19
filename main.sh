@@ -1,3 +1,8 @@
+check_dependencies() {
+    check_dependent sed || return 1
+    [ ${BASH_VERSION:0:1} -ge 4 ] || check_dependent tr || return 1
+}
+
 pre_hooks() {
     exec_hooks 'first_hook'
     exec_hooks 'pre_hook'
@@ -21,7 +26,7 @@ install_extras() {
 
 clone_dotfiles() {
     [ -d $DOTFILES ] && return 0
-    check_dependencies git || return 1
+    check_dependent git || return 1
 
     HERE=$(pwd)
 

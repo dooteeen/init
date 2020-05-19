@@ -12,7 +12,7 @@ executable_fn() {
     return $?
 }
 
-check_dependencies() {
+check_dependent() {
     # arg 1: command name
     if executable $1; then
         return 0
@@ -374,7 +374,7 @@ install_yay() {
     [ "$(detect_os_base)" = "arch" ] || return 1
     executable yay && return 0
 
-    check_dependencies git || $(append_sudo) pacman -S git
+    check_dependent git || $(append_sudo) pacman -S git
 
     HERE=$(pwd)
 
@@ -399,6 +399,11 @@ export -f post_hook_tmux
 export -f post_hook_vim
 export -f post_hook_vscode
 
+check_dependencies() {
+    check_dependent sed || return 1
+    [ ${BASH_VERSION:0:1} -ge 4 ] || check_dependent tr || return 1
+}
+
 pre_hooks() {
     exec_hooks 'first_hook'
     exec_hooks 'pre_hook'
@@ -422,7 +427,7 @@ install_extras() {
 
 clone_dotfiles() {
     [ -d $DOTFILES ] && return 0
-    check_dependencies git || return 1
+    check_dependent git || return 1
 
     HERE=$(pwd)
 
@@ -445,8 +450,7 @@ post_hooks() {
 
 # main scripts:
 
-check_dependencies sed || exit 1
-check_dependencies tr  || exit 1
+check_dependencies || exit 1
 pre_hooks
 install_essentials
 #install_brew
