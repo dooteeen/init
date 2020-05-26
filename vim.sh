@@ -1,9 +1,8 @@
 pre_hook_vim() {
     check_wheel || return 0
-    case "$(detect_os_base)":
+    case "$(detect_os_base)" in
         "debian")
-            dpkg -s vim-tiny >/dev/null 2>&1 \
-                && $(append_sudo) apt remove -y vim-tiny
+            dpkg -s vim-tiny >/dev/null 2>&1 && $(append_sudo) apt remove -y vim-tiny
             ;;
     esac
 }
