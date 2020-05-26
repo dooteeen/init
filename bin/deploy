@@ -73,15 +73,43 @@ else
 fi
 
 detect_os() {
-    [ -e /data/data/com.termux/files/home ] \
-        && echo "android" \
-        || sed -n 's/^ID=\(.*\)$/\1/p' /etc/os-release | to_lower
+    if [ -e /data/data/com.termux/files/home ]; then
+        echo "android"
+        return 0
+    elif [ -f /etc/os-release ]; then
+        if grep -q 'ID=' /etc/os-release; then
+            sed -n 's/^ID="?\(.*\)"?$/\1/p' /etc/os-release | to_lower | cut -f1 -d ' '
+            return 0
+        fi
+    elif [ -f /etc/centos-release ]; then
+        echo "centos"
+        return 0
+    fi
 }
 
 detect_os_base() {
-    [ -e /data/data/com.termux/files/home ] \
-        && echo "android" \
-        || sed -n 's/^ID_LIKE=\(.*\)$/\1/p' /etc/os-release | to_lower
+    if [ -e /data/data/com.termux/files/home ]; then
+        echo "android"
+        return 0
+    elif [ -f /etc/os-release ]; then
+        if grep -q 'ID_LIKE=' /etc/os-release; then
+            sed -n 's/^ID_LIKE="?\(.*\)"?$/\1/p' /etc/os-release | to_lower | cut -f1 -d ' '
+            return 0
+        elif grep -q 'ID=' /etc/os-release; then
+            case $(detect_os) in
+                "ubuntu")
+                    echo "debian"
+                    ;;
+                "centos" | "fedora")
+                    echo "rhel"
+                    ;;
+                "*")
+                    detect_os
+                    ;;
+            esac
+            return 0
+        fi
+    fi
 }
 
 os_package_manager() {
