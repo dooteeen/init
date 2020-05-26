@@ -73,6 +73,10 @@ build_deploy:
 
 test := ./test/test.sh
 test:
+	@echo "Lint all main scripts."
+	@find . -maxdepth 1 -name '*.sh' \
+		| xargs -I {} bash -n {}
+	@echo "==> Pass"
 	@echo '#!/bin/bash' > ${test}
 	@cat ./core.sh >> ${test}
 	@cat ./main.sh >> ${test}
@@ -82,7 +86,10 @@ test:
 		-not -wholename "./test/util.sh" \
 		| sort \
 		| xargs -I {} cat {} >> ${test}
+	@echo "Test with bats."
 	@bats --tap ./test/test.bats
+	@echo "==> Pass"
+	@echo "All tests have passed!"
 	@rm ${test}
 
 .PHONY: test
